@@ -7,7 +7,7 @@ namespace Integer.Legal.Api;
 
 public sealed class ApiExceptionHandler(IProblemDetailsService problemDetails) : IExceptionHandler
 {
-    public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken ct)
+    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         var (status, title, detail) = exception switch
         {
@@ -17,10 +17,10 @@ public sealed class ApiExceptionHandler(IProblemDetailsService problemDetails) :
             UnauthorizedAccessException => (401, "Unauthorized", "Authentication and a trusted firm context are required."),
             _ => (500, "Unexpected error", "An unexpected error occurred.")
         };
-        context.Response.StatusCode = status;
+        httpContext.Response.StatusCode = status;
         return await problemDetails.TryWriteAsync(new ProblemDetailsContext
         {
-            HttpContext = context,
+            HttpContext = httpContext,
             ProblemDetails = new ProblemDetails { Status = status, Title = title, Detail = detail }
         });
     }
