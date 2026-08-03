@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Integer.Legal.Api.Controllers;
 
-[ApiController, Authorize, Route("api/v1/deadlines")]
+[ApiController, Authorize(Policy = "LegalWrite"), Route("api/v1/deadlines")]
 public sealed class DeadlinesController(DeadlineService service) : ControllerBase
 {
     public sealed record CreateDeadlineRequest(Guid MatterId, string Title, DateTimeOffset DueAt);

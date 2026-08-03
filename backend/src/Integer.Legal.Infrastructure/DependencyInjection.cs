@@ -1,4 +1,5 @@
 using Integer.Legal.Application.Abstractions;
+using Integer.Legal.Application.Operations;
 using Integer.Legal.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,10 @@ public static class DependencyInjection
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IMatterRepository, MatterRepository>();
         services.AddScoped<IDeadlineRepository, DeadlineRepository>();
+        services.AddScoped<IOperationsRepository, OperationsRepository>();
+        services.AddScoped<IOperationalJournal, OperationalJournal>();
+        services.AddScoped<IPlatformIntegrationRepository, PlatformIntegrationRepository>();
+        services.AddScoped<IAuditRepository, AuditRepository>();
         return services;
     }
 }
