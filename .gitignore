@@ -7,6 +7,10 @@ TestResults/
 *.user
 *.suo
 node_modules/
+.next/
+.npm-cache/
+.runtime-home/
+*.tsbuildinfo
 dist/
 coverage/
 __pycache__/

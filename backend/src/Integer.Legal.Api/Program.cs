@@ -14,6 +14,12 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+builder.Services.AddCors(options => options.AddPolicy("LegalWeb", policy =>
+{
+    if (allowedOrigins.Length > 0)
+        policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
+}));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IFirmContext, ClaimsFirmContext>();
 builder.Services.AddScoped<IActorContext, ClaimsActorContext>();
@@ -56,6 +62,7 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
+app.UseCors("LegalWeb");
 app.UseAuthentication();
 app.UseAuthorization();
 if (app.Environment.IsDevelopment()) app.MapOpenApi().AllowAnonymous();
