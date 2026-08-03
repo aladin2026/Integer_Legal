@@ -6,6 +6,7 @@ required = [
     "backend/Integer.Legal.slnx", "database/migrations/001_legal_core.sql", "database/migrations/002_legal_mvp_completion.sql",
     "database/tests/rls_isolation.sql", "docs/work-packages/WP-IL-BE-002.md",
     "docs/work-packages/WP-IL-BE-003.md",
+    "docs/quality/IL-BACKEND-MVP-READY.md",
     "docs/work-packages/WP-IL-BE-001.md", "docs/adr/ADR-IL-001-module-boundaries-and-persistence.md",
 ]
 missing = [path for path in required if not (root / path).is_file()]

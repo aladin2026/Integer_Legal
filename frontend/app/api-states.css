@@ -1,0 +1,7 @@
+.data-state{margin:0 0 18px;padding:14px 18px;border:1px solid #d9e1e8;border-radius:12px;background:#f7fafc;color:#34495e}
+.data-state.error{border-color:#efb7b7;background:#fff6f6;color:#8b2525}
+.live-row{display:flex;justify-content:space-between;gap:18px;padding:13px 0;border-bottom:1px solid #edf0f2}
+.live-row:last-child{border-bottom:0}
+.live-row span{color:#68747f;text-align:end}
+.live-finance{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid #edf0f2}
+.live-finance span{color:#68747f}
