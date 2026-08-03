@@ -108,7 +108,7 @@ public sealed class FinancialController(OperationsService service) : ControllerB
     public async Task<IActionResult> ApprovePrebill(Guid prebillId, CancellationToken ct) { await service.ApprovePrebillAsync(prebillId, ct); return NoContent(); }
     [HttpPost("prebills/{prebillId:guid}/e-invoice-submission")]
     public async Task<IActionResult> SubmitPrebill(Guid prebillId, CancellationToken ct) { await service.SubmitPrebillAsync(prebillId, ct); return Accepted(); }
-    private ObjectResult CreatedResource(CreatedResource resource, string segment) => Created($"/api/v1/financial/{segment}/{resource.Id}", resource);
+    private CreatedResult CreatedResource(CreatedResource resource, string segment) => Created($"/api/v1/financial/{segment}/{resource.Id}", resource);
 }
 
 [ApiController, Authorize(Policy = "LegalAdmin"), Route("api/v1/administration")]
