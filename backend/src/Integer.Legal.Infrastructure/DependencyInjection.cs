@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<IOperationalJournal, OperationalJournal>();
         services.AddScoped<IPlatformIntegrationRepository, PlatformIntegrationRepository>();
         services.AddScoped<IAuditRepository, AuditRepository>();
+        services.AddScoped<ILegalReadRepository, LegalReadRepository>();
         return services;
     }
 }
