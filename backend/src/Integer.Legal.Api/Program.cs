@@ -30,8 +30,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.RequireHttpsMetadata = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true, ValidateAudience = true, ValidateLifetime = true,
-        ValidateIssuerSigningKey = true, ClockSkew = TimeSpan.FromMinutes(1)
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ClockSkew = TimeSpan.FromMinutes(1)
     };
 });
 builder.Services.AddAuthorization(options => options.FallbackPolicy = options.DefaultPolicy);
