@@ -24,6 +24,7 @@ builder.Services.AddScoped<DeadlineService>();
 builder.Services.AddScoped<OperationsService>();
 builder.Services.AddScoped<PlatformIntegrationService>();
 builder.Services.AddScoped<AuditService>();
+builder.Services.AddScoped<LegalReadService>();
 builder.Services.AddLegalInfrastructure(builder.Configuration);
 
 var authority = builder.Configuration["Authentication:Authority"] ?? throw new InvalidOperationException("Authentication:Authority is required.");
@@ -46,6 +47,7 @@ builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = options.DefaultPolicy;
     options.AddPolicy("LegalWrite", policy => policy.RequireClaim("permissions", "legal.write"));
+    options.AddPolicy("LegalRead", policy => policy.RequireClaim("permissions", "legal.read"));
     options.AddPolicy("LegalFinance", policy => policy.RequireClaim("permissions", "legal.finance"));
     options.AddPolicy("LegalAdmin", policy => policy.RequireClaim("permissions", "legal.admin"));
     options.AddPolicy("PlatformWorker", policy => policy.RequireClaim("permissions", "legal.platform.worker"));
