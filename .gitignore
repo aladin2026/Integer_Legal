@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+.idea/
+.env
+TestResults/
+*.user
+*.suo
+node_modules/
+dist/
+coverage/
+__pycache__/
+*.py[cod]

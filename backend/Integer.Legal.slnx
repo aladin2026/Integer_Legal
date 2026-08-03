@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Integer.Legal.Domain/Integer.Legal.Domain.csproj" />
+    <Project Path="src/Integer.Legal.Application/Integer.Legal.Application.csproj" />
+    <Project Path="src/Integer.Legal.Infrastructure/Integer.Legal.Infrastructure.csproj" />
+    <Project Path="src/Integer.Legal.Api/Integer.Legal.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Integer.Legal.Domain.Tests/Integer.Legal.Domain.Tests.csproj" />
+  </Folder>
+</Solution>
