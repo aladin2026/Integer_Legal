@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup><ProjectReference Include="../Integer.Legal.Domain/Integer.Legal.Domain.csproj" /></ItemGroup>
+</Project>

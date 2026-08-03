@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: integer_legal
+      POSTGRES_USER: integer_legal_admin
+      POSTGRES_PASSWORD: ${INTEGER_LEGAL_POSTGRES_PASSWORD:?set INTEGER_LEGAL_POSTGRES_PASSWORD}
+    ports: ["5432:5432"]
+    volumes:
+      - legal-postgres:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U integer_legal_admin -d integer_legal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  legal-postgres:
