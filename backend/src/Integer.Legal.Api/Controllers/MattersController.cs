@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Integer.Legal.Api.Controllers;
 
-[ApiController, Authorize, Route("api/v1/matters")]
+[ApiController, Authorize(Policy = "LegalWrite"), Route("api/v1/matters")]
 public sealed class MattersController(MatterService service) : ControllerBase
 {
     public sealed record CreateMatterRequest(Guid ClientId, string Reference, string Title, Guid ResponsibleUserId);

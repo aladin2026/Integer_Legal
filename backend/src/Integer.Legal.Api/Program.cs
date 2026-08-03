@@ -4,6 +4,7 @@ using Integer.Legal.Application.Abstractions;
 using Integer.Legal.Application.Clients;
 using Integer.Legal.Application.Deadlines;
 using Integer.Legal.Application.Matters;
+using Integer.Legal.Application.Operations;
 using Integer.Legal.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +16,14 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IFirmContext, ClaimsFirmContext>();
+builder.Services.AddScoped<IActorContext, ClaimsActorContext>();
 builder.Services.AddSingleton<IClock, SystemClock>();
 builder.Services.AddScoped<ClientService>();
 builder.Services.AddScoped<MatterService>();
 builder.Services.AddScoped<DeadlineService>();
+builder.Services.AddScoped<OperationsService>();
+builder.Services.AddScoped<PlatformIntegrationService>();
+builder.Services.AddScoped<AuditService>();
 builder.Services.AddLegalInfrastructure(builder.Configuration);
 
 var authority = builder.Configuration["Authentication:Authority"] ?? throw new InvalidOperationException("Authentication:Authority is required.");
@@ -37,7 +42,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ClockSkew = TimeSpan.FromMinutes(1)
     };
 });
-builder.Services.AddAuthorization(options => options.FallbackPolicy = options.DefaultPolicy);
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = options.DefaultPolicy;
+    options.AddPolicy("LegalWrite", policy => policy.RequireClaim("permissions", "legal.write"));
+    options.AddPolicy("LegalFinance", policy => policy.RequireClaim("permissions", "legal.finance"));
+    options.AddPolicy("LegalAdmin", policy => policy.RequireClaim("permissions", "legal.admin"));
+    options.AddPolicy("PlatformWorker", policy => policy.RequireClaim("permissions", "legal.platform.worker"));
+});
 
 var app = builder.Build();
 app.UseExceptionHandler();

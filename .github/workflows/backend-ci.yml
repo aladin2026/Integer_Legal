@@ -16,6 +16,19 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: integer_legal_test
+          POSTGRES_USER: integer_ci_admin
+          POSTGRES_PASSWORD: integer_ci_password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U integer_ci_admin -d integer_legal_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v6.0.2
         with: { persist-credentials: false }
@@ -23,6 +36,13 @@ jobs:
         with: { global-json-file: global.json }
       - run: python3 scripts/validate_repository.py
       - run: python3 scripts/scan_secrets.py
+      - name: Validate PostgreSQL migrations and tenant isolation
+        env:
+          PGPASSWORD: integer_ci_password
+        run: |
+          psql -h localhost -U integer_ci_admin -d integer_legal_test -f database/migrations/001_legal_core.sql
+          psql -h localhost -U integer_ci_admin -d integer_legal_test -f database/migrations/002_legal_mvp_completion.sql
+          psql -h localhost -U integer_ci_admin -d integer_legal_test -f database/tests/rls_isolation.sql
       - run: dotnet restore "$SOLUTION" --configfile nuget.config
       - run: dotnet format "$SOLUTION" --verify-no-changes --no-restore
       - run: dotnet list "$SOLUTION" package --vulnerable --include-transitive

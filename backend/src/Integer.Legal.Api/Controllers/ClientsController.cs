@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Integer.Legal.Api.Controllers;
 
-[ApiController, Authorize, Route("api/v1/clients")]
+[ApiController, Authorize(Policy = "LegalWrite"), Route("api/v1/clients")]
 public sealed class ClientsController(ClientService service) : ControllerBase
 {
     public sealed record CreateClientRequest(string Reference, string DisplayName, ClientKind Kind);
