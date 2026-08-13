@@ -10,7 +10,7 @@ public sealed class ClaimsFirmContext(IHttpContextAccessor accessor) : IFirmCont
         get
         {
             var principal = accessor.HttpContext?.User;
-            var value = principal?.FindFirstValue("firm_id");
+            var value = principal?.FindFirstValue("integer_tenant");
             if (principal?.Identity?.IsAuthenticated != true || !Guid.TryParse(value, out var firmId) || firmId == Guid.Empty)
                 throw new UnauthorizedAccessException("A trusted firm context is required.");
             return firmId;

@@ -7,5 +7,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Integer.Legal.Domain.Tests/Integer.Legal.Domain.Tests.csproj" />
+    <Project Path="tests/Integer.Legal.Api.Tests/Integer.Legal.Api.Tests.csproj" />
   </Folder>
 </Solution>

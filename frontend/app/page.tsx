@@ -15,6 +15,7 @@ import { CommunicationManagement } from "./communication-components";
 import { QualityManagement } from "./quality-components";
 import { announceAction } from "./ui-actions";
 import { legalApi, type Matter360 } from "./lib/legal-api";
+import { authentication, type AuthenticationSnapshot } from "./lib/browser-auth";
 import { LegalApiError } from "./lib/platform-auth";
 import "./budgets.css";
 import "./financial.css";
@@ -438,6 +439,7 @@ export default function Home() {
   const [liveMatters, setLiveMatters] = useState<MatterCard[]>([]);
   const [apiState, setApiState] = useState<"loading" | "ready" | "empty" | "error">("loading");
   const [apiMessage, setApiMessage] = useState("");
+  const [auth, setAuth] = useState<AuthenticationSnapshot>({ status: "loading" });
   const [selectedMatter, setSelectedMatter] = useState<
     (typeof matters)[number] | null
   >(null);
@@ -470,14 +472,14 @@ export default function Home() {
   const rtl = lang === "ar";
   const filtered = useMemo(
     () => {
-      const productMatters = apiState === "ready" ? liveMatters : [];
+      const productMatters = auth.status === "authenticated" && apiState === "ready" ? liveMatters : [];
       return productMatters.filter((m) =>
         `${m.ref} ${m.name} ${m.client}`
           .toLowerCase()
           .includes(query.toLowerCase()),
       );
     },
-    [apiState, liveMatters, query],
+    [apiState, auth.status, liveMatters, query],
   );
   const notify = (message: string) => {
     setNotice(message);
@@ -494,6 +496,14 @@ export default function Home() {
     return () => window.removeEventListener("integer-action", handleAction);
   }, []);
   useEffect(() => {
+    const unsubscribe = authentication.subscribe(setAuth);
+    void authentication.initialize();
+    return unsubscribe;
+  }, []);
+  useEffect(() => {
+    if (auth.status !== "authenticated") {
+      return;
+    }
     const controller = new AbortController();
     legalApi.listMatters(controller.signal).then((items) => {
       const mapped = items.map<MatterCard>((item) => ({
@@ -516,11 +526,15 @@ export default function Home() {
       setApiMessage(apiErrorMessage(error, lang));
     });
     return () => controller.abort();
-  }, [lang]);
+  }, [auth.status, auth.message, lang]);
   const markNotificationsRead = (message: string) => {
     window.dispatchEvent(new Event("integer-notifications-read"));
     notify(message);
   };
+  const displayedApiState = auth.status === "authenticated"
+    ? apiState
+    : auth.status === "loading" ? "loading" : auth.status === "error" ? "error" : "empty";
+  const displayedApiMessage = auth.status === "authenticated" ? apiMessage : (auth.message ?? "");
   const navigate = (nextView: View) => {
     setView(nextView);
     setSelectedMatter(null);
@@ -610,6 +624,11 @@ export default function Home() {
             {query && <button onClick={() => setQuery("")}>×</button>}
           </label>
           <div className="top-actions">
+            <button className="tour-button" onClick={() => void (auth.status === "authenticated" ? authentication.signOut() : authentication.signIn())}>
+              {auth.status === "authenticated"
+                ? (lang === "ar" ? "تسجيل الخروج" : lang === "en" ? "Sign out" : "Déconnexion")
+                : (lang === "ar" ? "تسجيل الدخول" : lang === "en" ? "Sign in" : "Connexion")}
+            </button>
             <button className="tour-button" onClick={() => setTourStep(1)}>
               ▷ {t.tour}
             </button>
@@ -636,8 +655,8 @@ export default function Home() {
         </header>
 
         <div className="content">
-          {apiState !== "ready" && (
-            <DataState state={apiState} message={apiMessage} lang={lang} />
+          {displayedApiState !== "ready" && (
+            <DataState state={displayedApiState} message={displayedApiMessage} lang={lang} />
           )}
           {selectedMatter ? (
             <MatterDetail
