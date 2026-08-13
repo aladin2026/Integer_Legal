@@ -15,6 +15,7 @@ import { CommunicationManagement } from "./communication-components";
 import { QualityManagement } from "./quality-components";
 import { announceAction } from "./ui-actions";
 import { legalApi, type Matter360 } from "./lib/legal-api";
+import { authentication, type AuthenticationSnapshot } from "./lib/browser-auth";
 import { LegalApiError } from "./lib/platform-auth";
 import "./budgets.css";
 import "./financial.css";
@@ -438,6 +439,7 @@ export default function Home() {
   const [liveMatters, setLiveMatters] = useState<MatterCard[]>([]);
   const [apiState, setApiState] = useState<"loading" | "ready" | "empty" | "error">("loading");
   const [apiMessage, setApiMessage] = useState("");
+  const [auth, setAuth] = useState<AuthenticationSnapshot>({ status: "loading" });
   const [selectedMatter, setSelectedMatter] = useState<
     (typeof matters)[number] | null
   >(null);
@@ -494,6 +496,16 @@ export default function Home() {
     return () => window.removeEventListener("integer-action", handleAction);
   }, []);
   useEffect(() => {
+    const unsubscribe = authentication.subscribe(setAuth);
+    void authentication.initialize();
+    return unsubscribe;
+  }, []);
+  useEffect(() => {
+    if (auth.status !== "authenticated") {
+      setApiState(auth.status === "loading" ? "loading" : "empty");
+      setApiMessage(auth.message ?? "");
+      return;
+    }
     const controller = new AbortController();
     legalApi.listMatters(controller.signal).then((items) => {
       const mapped = items.map<MatterCard>((item) => ({
@@ -516,7 +528,7 @@ export default function Home() {
       setApiMessage(apiErrorMessage(error, lang));
     });
     return () => controller.abort();
-  }, [lang]);
+  }, [auth.status, auth.message, lang]);
   const markNotificationsRead = (message: string) => {
     window.dispatchEvent(new Event("integer-notifications-read"));
     notify(message);
@@ -610,6 +622,11 @@ export default function Home() {
             {query && <button onClick={() => setQuery("")}>×</button>}
           </label>
           <div className="top-actions">
+            <button className="tour-button" onClick={() => void (auth.status === "authenticated" ? authentication.signOut() : authentication.signIn())}>
+              {auth.status === "authenticated"
+                ? (lang === "ar" ? "تسجيل الخروج" : lang === "en" ? "Sign out" : "Déconnexion")
+                : (lang === "ar" ? "تسجيل الدخول" : lang === "en" ? "Sign in" : "Connexion")}
+            </button>
             <button className="tour-button" onClick={() => setTourStep(1)}>
               ▷ {t.tour}
             </button>

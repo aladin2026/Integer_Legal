@@ -1,5 +1,9 @@
 # Integer Legal
 
+## Test local de bout en bout
+
+Le parcours réel frontend → OIDC/PKCE → API → PostgreSQL se lance depuis PowerShell avec `./scripts/start_legal_local.ps1`. Le guide détaillé, les comptes de démonstration et les contrôles d’isolation sont dans [docs/operations/LEGAL-LOCAL-E2E-RUNBOOK.md](docs/operations/LEGAL-LOCAL-E2E-RUNBOOK.md).
+
 Integer Legal est le module métier trilingue français–anglais–arabe (RTL natif) de gestion et de pilotage des cabinets d’avocats, conçu pour le Maroc puis extensible à l’Afrique.
 
 ## État de construction

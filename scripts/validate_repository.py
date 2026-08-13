@@ -7,6 +7,10 @@ required = [
     "database/tests/rls_isolation.sql", "docs/work-packages/WP-IL-BE-002.md",
     "docs/work-packages/WP-IL-BE-003.md",
     "docs/quality/IL-BACKEND-MVP-READY.md",
+    "docs/work-packages/WP-IL-E2E-001.md", "docs/adr/ADR-IL-004-local-oidc-provider.md",
+    "docs/operations/LEGAL-LOCAL-E2E-RUNBOOK.md", "infrastructure/keycloak/integer-local-realm.json",
+    "database/fixtures/001_local_demo.sql", "scripts/start_legal_local.ps1", "scripts/stop_legal_local.ps1",
+    "database/local/001_runtime_role.sql",
     "docs/work-packages/WP-IL-BE-001.md", "docs/adr/ADR-IL-001-module-boundaries-and-persistence.md",
 ]
 missing = [path for path in required if not (root / path).is_file()]

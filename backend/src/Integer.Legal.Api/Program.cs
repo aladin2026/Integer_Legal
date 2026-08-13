@@ -39,7 +39,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 {
     options.Authority = authority;
     options.Audience = audience;
-    options.RequireHttpsMetadata = true;
+    options.RequireHttpsMetadata =
+        !builder.Environment.IsDevelopment()
+        || !Uri.TryCreate(authority, UriKind.Absolute, out var authorityUri)
+        || !authorityUri.IsLoopback;
+    options.MapInboundClaims = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -52,11 +56,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = options.DefaultPolicy;
-    options.AddPolicy("LegalWrite", policy => policy.RequireClaim("permissions", "legal.write"));
-    options.AddPolicy("LegalRead", policy => policy.RequireClaim("permissions", "legal.read"));
-    options.AddPolicy("LegalFinance", policy => policy.RequireClaim("permissions", "legal.finance"));
-    options.AddPolicy("LegalAdmin", policy => policy.RequireClaim("permissions", "legal.admin"));
-    options.AddPolicy("PlatformWorker", policy => policy.RequireClaim("permissions", "legal.platform.worker"));
+    options.AddPolicy("LegalWrite", policy => policy.RequireClaim("integer_permission", "legal.write"));
+    options.AddPolicy("LegalRead", policy => policy.RequireClaim("integer_permission", "legal.read"));
+    options.AddPolicy("LegalFinance", policy => policy.RequireClaim("integer_permission", "legal.finance"));
+    options.AddPolicy("LegalAdmin", policy => policy.RequireClaim("integer_permission", "legal.admin"));
+    options.AddPolicy("PlatformWorker", policy => policy.RequireClaim("integer_permission", "legal.platform.worker"));
 });
 
 var app = builder.Build();
