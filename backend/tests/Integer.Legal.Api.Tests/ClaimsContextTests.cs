@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Integer.Legal.Api.Security;
 using Microsoft.AspNetCore.Http;
+using Xunit;
 
 namespace Integer.Legal.Api.Tests;
 
