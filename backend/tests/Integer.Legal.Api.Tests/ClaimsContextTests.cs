@@ -14,7 +14,7 @@ public sealed class ClaimsContextTests
     }
 
     [Fact]
-    public void FirmContext_UsesIntegerPlatformTenantClaim()
+    public void FirmContextUsesIntegerPlatformTenantClaim()
     {
         var firmId = Guid.NewGuid();
         var context = new ClaimsFirmContext(Accessor(new Claim("integer_tenant", firmId.ToString())));
@@ -22,14 +22,14 @@ public sealed class ClaimsContextTests
     }
 
     [Fact]
-    public void FirmContext_RejectsLegacyFirmIdClaim()
+    public void FirmContextRejectsLegacyFirmIdClaim()
     {
         var context = new ClaimsFirmContext(Accessor(new Claim("firm_id", Guid.NewGuid().ToString())));
         Assert.Throws<UnauthorizedAccessException>(() => context.FirmId);
     }
 
     [Fact]
-    public void ActorContext_UsesUnmappedSubjectClaim()
+    public void ActorContextUsesUnmappedSubjectClaim()
     {
         var actorId = Guid.NewGuid();
         var context = new ClaimsActorContext(Accessor(new Claim("sub", actorId.ToString())));
