@@ -472,14 +472,14 @@ export default function Home() {
   const rtl = lang === "ar";
   const filtered = useMemo(
     () => {
-      const productMatters = apiState === "ready" ? liveMatters : [];
+      const productMatters = auth.status === "authenticated" && apiState === "ready" ? liveMatters : [];
       return productMatters.filter((m) =>
         `${m.ref} ${m.name} ${m.client}`
           .toLowerCase()
           .includes(query.toLowerCase()),
       );
     },
-    [apiState, liveMatters, query],
+    [apiState, auth.status, liveMatters, query],
   );
   const notify = (message: string) => {
     setNotice(message);
@@ -502,8 +502,6 @@ export default function Home() {
   }, []);
   useEffect(() => {
     if (auth.status !== "authenticated") {
-      setApiState(auth.status === "loading" ? "loading" : "empty");
-      setApiMessage(auth.message ?? "");
       return;
     }
     const controller = new AbortController();
@@ -533,6 +531,10 @@ export default function Home() {
     window.dispatchEvent(new Event("integer-notifications-read"));
     notify(message);
   };
+  const displayedApiState = auth.status === "authenticated"
+    ? apiState
+    : auth.status === "loading" ? "loading" : auth.status === "error" ? "error" : "empty";
+  const displayedApiMessage = auth.status === "authenticated" ? apiMessage : (auth.message ?? "");
   const navigate = (nextView: View) => {
     setView(nextView);
     setSelectedMatter(null);
@@ -653,8 +655,8 @@ export default function Home() {
         </header>
 
         <div className="content">
-          {apiState !== "ready" && (
-            <DataState state={apiState} message={apiMessage} lang={lang} />
+          {displayedApiState !== "ready" && (
+            <DataState state={displayedApiState} message={displayedApiMessage} lang={lang} />
           )}
           {selectedMatter ? (
             <MatterDetail
